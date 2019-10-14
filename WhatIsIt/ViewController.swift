@@ -14,14 +14,18 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     let imagePicker = UIImagePickerController()
 
+   
+    @IBOutlet weak var resultLabel: UILabel!
     @IBOutlet weak var imageView: UIImageView!
     
+    @IBOutlet weak var appBg: UIImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         imagePicker.delegate = self
         imagePicker.sourceType = .camera
         imagePicker.allowsEditing = false
+        self.navigationItem.title = "What Is it?"
     }
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
@@ -31,6 +35,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             guard let ciimage = CIImage(image: userPickedImage) else{
                 fatalError("Could not use")
             }
+            
+            appBg.image = nil
             detect(image: ciimage)
         }
         
@@ -50,9 +56,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
        
             print(results)
             if let firstResult = results.first{
-                self.navigationItem.title = firstResult.identifier
+                
+                self.resultLabel.text = " It is '\(firstResult.identifier)' \n(possibility: \(String(format: "%.2f",firstResult.confidence*100))%)"
             }
-           
+          
         }
         
         let handler = VNImageRequestHandler(ciImage: image)
